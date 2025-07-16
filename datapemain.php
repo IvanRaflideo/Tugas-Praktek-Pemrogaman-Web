@@ -1,7 +1,14 @@
 <?php
-    require 'function.php';
-    $query = "SELECT * FROM pemain";
-    $rows = query($query);
+
+session_start();
+if (!isset($_SESSION["login"])) {
+    header("Location: login.php");
+    exit;
+}
+
+include 'function.php';
+$query = "SELECT * FROM pemain";
+$rows = query($query);
 ?>
 
 
@@ -15,6 +22,8 @@
     
 </head>
 <body>
+    <a href="logout.php">Logout</a>
+        
     <h1>Data Pemain </h1>
     <a href="tambahdata.php">
         <button style="margin-bottom: 12px; background-color: lightblue;">Tambah Data</button>
@@ -27,7 +36,7 @@
             <th>Nama Pemain</th>
             <th>Nomor Punggung</th>
             <th>Posisi</th>
-            <th>Aksi</th>
+            <th>Aksi</th>   
         </tr>
         <?php 
         $i = 1;
@@ -41,7 +50,7 @@
             <td><a href="hapusdata.php?id=<?= $pmn["id"] ?>">
                     <button style="margin-bottom: 12px; background-color: lightblue;">Hapus</button>
                 <a href="ubahdata.php?id=<?= $pmn["id"] ?>">
-                    <button style="margin-bottom: 12px; background-color: lightblue;">Ubah</button>
+                    <button style="margin-bottom: 12px; background-color: lightblue;">Edit</button>
                 </a>
             </td>
         </tr>

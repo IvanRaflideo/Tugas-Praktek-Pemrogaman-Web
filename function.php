@@ -107,4 +107,69 @@ function ubahdata($data, $id)
 
     return mysqli_affected_rows($koneksi);
 }
+
+function register($data) {
+    global $koneksi;
+    $username = strtolower(stripslashes($data["username"]));
+    $password1 = mysqli_real_escape_string($koneksi, $data["password1"]);
+    $password2 = mysqli_real_escape_string($koneksi, $data["password2"]);
+
+    // cek username sudah ada atau belum
+    $result = mysqli_query($koneksi, "SELECT username FROM user WHERE username = '$username'");
+    if (mysqli_fetch_assoc($result)) {
+        return "Username sudah terdaftar";
+    }
+
+    // cek konfirmasi password
+    if ($password1 !== $password2) {
+        return "Konfirmasi password tidak sesuai";
+    }
+
+    // enkripsi password
+    $password = password_hash($password1, PASSWORD_DEFAULT);
+
+    // simpan ke database
+    $query = "INSERT INTO user (username, password) VALUES ('$username', '$password')";
+    if (mysqli_query($koneksi, $query)) {
+        return "Register Berhasil";
+    } else {
+        return "Register Gagal";
+    }
+}
+function reg($data) {
+    global $koneksi;
+
+    $username = stripslashes($data["username"]);
+    $password1 = $data["password1"];
+    $password2 = $data["password2"];
+
+    $query = "SELECT * FROM user WHERE username= '$username'";
+
+    $useranem_check = mysqli_query($koneksi, $query);
+    if (mysqli_num_rows($useranem_check) > 0) {
+        return "Username sudah terdaftar!";
+    }
+
+    if(!preg_match('/^[][a-zA-Z0-9_]+$/', $username)) {
+        return "Username hanya boleh mengandung huruf, angka, dan underscore!";
+    }
+
+    if( $password1 !== $password2) {
+        return "Konfirmasi password tidak sesuai!";
+    }
+
+    $encrypted_pass = password_hash($password1, PASSWORD_DEFAULT);
+    
+    $query = "INSERT INTO user (username, password) VALUES ('$username', '$encrypted_pass')";
+
+  if (mysqli_query($koneksi, $query))
+  {
+    return "Register Berhasil";
+  }
+  else
+    {
+    return "Register Gagal: " . mysqli_error($koneksi);
+}
+
+}
 ?>
